@@ -1,0 +1,18 @@
+{
+  "name": "Expense Tracker",
+  "short_name": "Expenses",
+  "description": "AI-powered expense tracking with receipt OCR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

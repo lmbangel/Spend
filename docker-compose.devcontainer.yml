@@ -1,0 +1,60 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspace:cached
+      - node_modules:/workspace/frontend/node_modules
+      - go_cache:/go
+      - go_mod_cache:/go/pkg/mod
+    command: sleep infinity
+    environment:
+      - NODE_ENV=development
+      - ENVIRONMENT=development
+      - VITE_API_URL=http://localhost:8000
+    ports:
+      - "3000:3000"
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - expense-tracker-network
+
+  # Database - MySQL
+  db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=expense_tracker
+      - MYSQL_USER=expense_user
+      - MYSQL_PASSWORD=expense_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - expense-tracker-network
+
+  # Nginx - Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+    networks:
+      - expense-tracker-network
+
+volumes:
+  mysql_data:
+  node_modules:
+  go_cache:
+  go_mod_cache:
+
+networks:
+  expense-tracker-network:
+    driver: bridge
